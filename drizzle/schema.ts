@@ -1,17 +1,8 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
-/**
- * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
- */
+/** Users table backing the starter's optional auth flow. */
 export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
@@ -21,8 +12,45 @@ export const users = mysqlTable("users", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
-
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+export const notes = mysqlTable("notes", {
+  id: int("id").autoincrement().primaryKey(),
+  body: text("body").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const profiles = mysqlTable("profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 80 }).notNull(),
+  bio: varchar("bio", { length: 240 }).notNull(),
+  imageUrl: varchar("imageUrl", { length: 2048 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const coffeeItems = mysqlTable("coffee_items", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 40 }).notNull().unique(),
+  name: varchar("name", { length: 80 }).notNull(),
+  description: varchar("description", { length: 240 }).notNull(),
+  voteCount: int("voteCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const quoteHistory = mysqlTable("quote_history", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteId: varchar("quoteId", { length: 64 }).notNull(),
+  text: text("text").notNull(),
+  author: varchar("author", { length: 240 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const teamMembers = mysqlTable("team_members", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 40 }).notNull().unique(),
+  name: varchar("name", { length: 80 }).notNull(),
+  role: varchar("role", { length: 100 }).notNull(),
+  available: boolean("available").default(true).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});

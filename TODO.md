@@ -1,0 +1,9 @@
+# TODO — VirtualWork internship deliverables
+
+- [ ] **Quick Note Application:** Build a single-page application where users can write and save notes. Send notes to a Python backend, store them in the database, and display them on the same page. This task introduces request-response flow and basic data storage.
+- [ ] **User Profile Card Generator:** Create a form-based application where users input details such as name, bio, and image URL. The backend processes this data and returns a formatted profile card on the frontend. This task focuses on handling POST requests and passing data between backend and UI.
+- [ ] **Coffee Rating Application:** Develop an application that displays a list of items where users can vote using a button. Each click updates a vote count stored in a database. This task introduces database updates and backend logic handling.
+- [ ] **Quote Generator with History:** Build an application that fetches random quotes from an external API and displays them to the user. Each quote is also saved in a database as history. This task teaches API integration and external data handling.
+- [ ] **Team Availability Tracker:** Create a dashboard that displays a list of users with availability toggles. Changing a toggle updates a boolean value in the database and reflects visually on the frontend. This task focuses on conditional rendering and state synchronization.
+- [ ] **Mandatory Offer Letter Acceptance (draft only):** Prepare a LinkedIn-post draft tagging @virtualworks-lab and referencing the official offer letter. Attach the user's official offer letter and publish only after the user provides it and reviews/approves the exact post. The task description says this is compulsory.
+- [ ] **Proof submission:** Provide a distinct app URL for each task and show the exact URLs before submitting them on VirtualWork; do not submit without the user's approval.

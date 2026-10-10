@@ -1,12 +1,14 @@
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
+import { spawn } from "node:child_process";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { publicPlatformScript } from "./publicConfig";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { registerAppRoutes } from "../appRoutes";
 
 async function startServer() {
   const app = express();
@@ -15,6 +17,20 @@ async function startServer() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+  const notesService = spawn(process.env.PYTHON_BIN || "python3", ["python/notes_service.py"], {
+    cwd: process.cwd(),
+    env: { ...process.env, NOTES_PORT: process.env.NOTES_PORT || "3001" },
+    stdio: "inherit",
+  });
+  notesService.on("error", error => console.error("Could not start the Python notes service:", error.message));
+  notesService.on("exit", (code, signal) => {
+    if (code !== 0 && code !== null) console.error(`Python notes service exited with code ${code}`);
+    if (signal) console.error(`Python notes service stopped by ${signal}`);
+  });
+  const stopNotesService = () => { if (!notesService.killed) notesService.kill("SIGTERM"); };
+  process.once("SIGINT", stopNotesService);
+  process.once("SIGTERM", stopNotesService);
+  registerAppRoutes(app);
   app.get("/api/platform/config.js", (_req, res) => {
     res.set("Cache-Control", "no-store").type("application/javascript").send(publicPlatformScript());
   });
